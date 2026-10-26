@@ -6,7 +6,12 @@
  hoimod_camp_construction_desc:0 "Lets fascist Germany build concentration camps in occupied states that are not German cores."
 
  hoimod_peace_category:0 "Peace Conference"
- hoimod_peace_category_desc:0 "Offer peace without capitulation. The enemy receives an event. The conference opens only if they accept."
+ hoimod_peace_category_desc:0 "Offer peace without capitulation. If the enemy offers, the answer is here too, without a popup."
+
+ hoimod_answer_yes:0 "Accept the peace conference"
+ hoimod_answer_yes_desc:0 "[hoimod_g_proposer.GetNameDefCap] offers a conference with [hoimod_g_target.GetNameDef]. Cause: [HoimodCase]. Reparations: [HoimodRep]."
+ hoimod_answer_no:0 "Refuse the peace conference"
+ hoimod_answer_no_desc:0 "A refusal closes this pair for 180 days. Cause: [HoimodCase]. Reparations: [HoimodRep]."
 
  hoimod_offer_none:0 "Offer a conference to [From.GetNameDef]"
  hoimod_offer_none_desc:0 "No reparations. The offer appears on its own: a clear advantage, a dead front, or a war with no front line."

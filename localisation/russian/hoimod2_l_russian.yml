@@ -6,7 +6,12 @@
  hoimod_camp_construction_desc:0 "Позволяет фашистской Германии строить концлагеря в оккупированных регионах, которые не являются её ядрами."
 
  hoimod_peace_category:0 "Мирная конференция"
- hoimod_peace_category_desc:0 "Предложить мир без капитуляции. Противнику придёт событие. Окно откроется, только если он согласится."
+ hoimod_peace_category_desc:0 "Предложить мир без капитуляции. Если предлагает противник, ответ тоже здесь, без всплывающего окна."
+
+ hoimod_answer_yes:0 "Принять мирную конференцию"
+ hoimod_answer_yes_desc:0 "[hoimod_g_proposer.GetNameDefCap] предлагает конференцию с [hoimod_g_target.GetNameDef]. Повод: [HoimodCase]. Репарации: [HoimodRep]."
+ hoimod_answer_no:0 "Отказать в мирной конференции"
+ hoimod_answer_no_desc:0 "Отказ закроет эту пару на 180 дней. Повод: [HoimodCase]. Репарации: [HoimodRep]."
 
  hoimod_offer_none:0 "Предложить конференцию [From.GetNameDef]"
  hoimod_offer_none_desc:0 "Без репараций. Повод появляется сам: преимущество, мёртвый фронт или война без линии фронта."

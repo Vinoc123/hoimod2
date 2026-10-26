@@ -1,5 +1,45 @@
 hoimod_peace_category = {
 
+	hoimod_answer_yes = {
+		icon = generic_political_discourse
+		cost = 0
+		fire_only_once = no
+		priority = 100
+
+		visible = {
+			has_country_flag = hoimod_player_must_answer
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		complete_effect = {
+			clr_country_flag = hoimod_player_must_answer
+			hoimod_accept_offer = yes
+		}
+	}
+
+	hoimod_answer_no = {
+		icon = generic_political_discourse
+		cost = 0
+		fire_only_once = no
+		priority = 90
+
+		visible = {
+			has_country_flag = hoimod_player_must_answer
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+
+		complete_effect = {
+			clr_country_flag = hoimod_player_must_answer
+			hoimod_reject_offer = yes
+		}
+	}
+
 	hoimod_offer_none = {
 		icon = generic_political_discourse
 		cost = 0

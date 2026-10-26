@@ -4,9 +4,9 @@
 # Casualty share uses thousands and adds 80 before dividing.
 # Advantage: war longer than 90 days, best leverage at least 0.35, gap at least 0.20.
 # Score for advantage is the gap, clamped to 0.20..0.85.
-# Frozen front: longer than 180 days, both surrender progresses in 0.05..0.55,
+# Frozen front: longer than 365 days, both surrender progresses in 0.05..0.55,
 # neither rose by more than 0.08 over the tracked half year, pair casualties at least 300k.
-# Frozen score is 0.12. No shared front: longer than 120 days, score 0.05.
+# Frozen score is 0.12. No shared front: longer than 365 days, score 0.05.
 # Reparations subtract 0.08, 0.15, or 0.25. A tier is hidden when the remainder is below 0.05.
 # Medium and heavy exist only for an advantage. Cooldown after a refusal is 180 days.
 
@@ -274,7 +274,7 @@ hoimod_update_pair = {
 	}
 	else_if = {
 		limit = {
-			check_variable = { hoimod_len > 179 }
+			check_variable = { hoimod_len > 364 }
 			check_variable = { hoimod_sp_samples > 6 }
 			check_variable = { event_target:hoimod_pair_enemy.hoimod_sp_samples > 6 }
 			surrender_progress > 0.049
@@ -292,7 +292,7 @@ hoimod_update_pair = {
 	}
 	else_if = {
 		limit = {
-			check_variable = { hoimod_len > 119 }
+			check_variable = { hoimod_len > 364 }
 			NOT = {
 				any_controlled_state = {
 					any_neighbor_state = {
@@ -559,7 +559,15 @@ hoimod_send_offer = {
 			set_country_flag = hoimod_offer_pending
 			event_target:hoimod_receiver = {
 				set_country_flag = hoimod_offer_pending
-				country_event = { id = hoimod2.1 }
+				if = {
+					limit = { is_ai = yes }
+					country_event = { id = hoimod2.1 }
+				}
+				else = {
+					set_country_flag = hoimod_player_must_answer
+					var:global.hoimod_proposer = { save_global_event_target_as = hoimod_g_proposer }
+					var:global.hoimod_target = { save_global_event_target_as = hoimod_g_target }
+				}
 			}
 			event_target:hoimod_pair_enemy = { set_country_flag = hoimod_offer_pending }
 		}
@@ -687,7 +695,10 @@ hoimod_reject_offer = {
 hoimod_clear_offer_flags = {
 	var:global.hoimod_proposer = { clr_country_flag = hoimod_offer_pending }
 	var:global.hoimod_target = { clr_country_flag = hoimod_offer_pending }
-	var:global.hoimod_receiver = { clr_country_flag = hoimod_offer_pending }
+	var:global.hoimod_receiver = {
+		clr_country_flag = hoimod_offer_pending
+		clr_country_flag = hoimod_player_must_answer
+	}
 }
 
 hoimod_apply_reparations = {
