@@ -1,0 +1,38 @@
+buildings = {
+
+	hoimod_camp = {
+		show_on_map = 1
+		base_cost = 8000
+		icon_frame = 14
+		value = 1
+		infrastructure_construction_effect = yes
+		hide_if_missing_tech = yes
+		disabled_in_dmz = yes
+		show_modifier = yes
+
+		level_cap = {
+			state_max = 1
+		}
+
+		# Speed falls to zero outside a fascist German occupation of a non-core.
+		construction_speed_factor = {
+			trigger = {
+				NOT = {
+					controller = {
+						original_tag = GER
+						has_government = fascism
+					}
+					NOT = { is_owned_by = controller }
+					NOT = { is_core_of = controller }
+				}
+			}
+			factor = 0
+		}
+
+		state_modifiers = {
+			resistance_target = -0.30
+			local_factories = 0.30
+			required_garrison_factor = 1
+		}
+	}
+}

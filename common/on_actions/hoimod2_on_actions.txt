@@ -1,0 +1,95 @@
+on_actions = {
+
+	on_startup = {
+		effect = {
+			every_country = {
+				limit = {
+					original_tag = GER
+					has_government = fascism
+				}
+				set_technology = {
+					hoimod_camp_construction = 1
+					popup = no
+				}
+			}
+		}
+	}
+
+	on_government_change = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = GER
+					has_government = fascism
+					NOT = { has_tech = hoimod_camp_construction }
+				}
+				set_technology = {
+					hoimod_camp_construction = 1
+					popup = no
+				}
+			}
+		}
+	}
+
+	on_state_control_changed = {
+		effect = {
+			FROM.FROM = {
+				if = {
+					limit = {
+						hoimod_camp > 0
+						OR = {
+							is_owned_by = ROOT
+							is_core_of = ROOT
+							ROOT = {
+								OR = {
+									NOT = { original_tag = GER }
+									NOT = { has_government = fascism }
+								}
+							}
+						}
+					}
+					remove_building = {
+						type = hoimod_camp
+						level = 1
+					}
+				}
+			}
+		}
+	}
+
+	on_monthly = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = GER
+				}
+				every_controlled_state = {
+					limit = {
+						hoimod_camp > 0
+					}
+					if = {
+						limit = {
+							OR = {
+								is_owned_by = ROOT
+								is_core_of = ROOT
+								ROOT = { NOT = { has_government = fascism } }
+							}
+						}
+						remove_building = {
+							type = hoimod_camp
+							level = 1
+						}
+					}
+					else_if = {
+						limit = {
+							state_population > 50000
+						}
+						set_temp_variable = { hoimod_loss = state_population }
+						multiply_temp_variable = { hoimod_loss = -0.004 }
+						add_manpower = hoimod_loss
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,28 @@
+technologies = {
+
+	hoimod_camp_construction = {
+		allow = { always = no }
+
+		enable_building = {
+			building = hoimod_camp
+			level = 1
+		}
+
+		research_cost = 1
+		start_year = 1936
+		show_effect_as_desc = no
+
+		folder = {
+			name = industry_folder
+			position = { x = 18 y = 0 }
+		}
+
+		categories = {
+			industry
+		}
+
+		ai_will_do = {
+			factor = 0
+		}
+	}
+}
