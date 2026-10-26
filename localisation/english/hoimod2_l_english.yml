@@ -1,6 +1,6 @@
 ﻿l_english:
  hoimod_camp:0 "Concentration Camp"
- hoimod_camp_desc:0 "One per state. Lowers the resistance target and hands the controller a larger share of local factories. The state's occupation garrison bill is charged again: manpower and equipment are drawn from the suppression template selected in the occupation screen. State population falls by 0.4% each month until 50,000 people remain."
+ hoimod_camp_desc:0 "The button is in the construction screen, with the state buildings. It can be built only where Germany occupies foreign land that is not a German core. Lowers the resistance target and hands the controller a larger share of local factories. The state's occupation garrison bill is charged again: manpower and equipment are drawn from the suppression template selected in the occupation screen. State population falls by 0.4% each month until 50,000 people remain."
  hoimod_camp_plural:0 "Concentration Camps"
  hoimod_camp_construction:0 "Camp Administration"
  hoimod_camp_construction_desc:0 "Lets fascist Germany build concentration camps in occupied states that are not German cores."

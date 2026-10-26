@@ -3,11 +3,6 @@ technologies = {
 	hoimod_camp_construction = {
 		allow = { always = no }
 
-		enable_building = {
-			building = hoimod_camp
-			level = 1
-		}
-
 		research_cost = 1
 		start_year = 1936
 

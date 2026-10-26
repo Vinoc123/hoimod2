@@ -6,7 +6,6 @@ buildings = {
 		icon_frame = 14
 		value = 1
 		infrastructure_construction_effect = yes
-		hide_if_missing_tech = yes
 		disabled_in_dmz = yes
 		show_modifier = yes
 
