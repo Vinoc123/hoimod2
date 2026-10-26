@@ -1,0 +1,5 @@
+entity = {
+	name = "building_hoimod_camp"
+	pdxmesh = "building_bunker"
+	scale = 0.8
+}
