@@ -1,0 +1,36 @@
+add_namespace = hoimod2
+
+country_event = {
+	id = hoimod2.1
+	title = hoimod2.1.t
+	desc = hoimod2.1.d
+	picture = GFX_report_event_generic_conference
+	is_triggered_only = yes
+
+	immediate = {
+		var:global.hoimod_proposer = { save_event_target_as = hoimod_proposer_et }
+		var:global.hoimod_target = { save_event_target_as = hoimod_target_et }
+	}
+
+	option = {
+		name = hoimod2.1.a
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = var:global.hoimod_accept_weight
+			}
+		}
+		hoimod_accept_offer = yes
+	}
+
+	option = {
+		name = hoimod2.1.b
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = var:global.hoimod_reject_weight
+			}
+		}
+		hoimod_reject_offer = yes
+	}
+}

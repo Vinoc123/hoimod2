@@ -57,7 +57,28 @@ on_actions = {
 		}
 	}
 
+	on_war_relation_added = {
+		effect = {
+			ROOT = { set_variable = { hoimod_war_start@FROM = global.num_days } }
+			FROM = { set_variable = { hoimod_war_start@ROOT = global.num_days } }
+		}
+	}
+
+	on_peaceconference_ended = {
+		effect = {
+			if = {
+				limit = { has_country_flag = hoimod_rep_receiver }
+				hoimod_apply_reparations = yes
+			}
+			clr_country_flag = hoimod_conference_active
+			clr_country_flag = hoimod_offer_pending
+		}
+	}
+
 	on_monthly = {
+		effect = {
+			hoimod_monthly_update = yes
+		}
 		effect = {
 			if = {
 				limit = {

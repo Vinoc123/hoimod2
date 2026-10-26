@@ -1,0 +1,727 @@
+# Tunable peace numbers. Building bonuses live in common/buildings/hoimod2_buildings.txt.
+# Population loss is 0.4% per month, floored at 50,000, in on_monthly.
+# Leverage = 0.70 * enemy surrender progress + 0.30 * our share of the pair's casualties.
+# Casualty share uses thousands and adds 80 before dividing.
+# Advantage: war longer than 90 days, best leverage at least 0.35, gap at least 0.20.
+# Score for advantage is the gap, clamped to 0.20..0.85.
+# Frozen front: longer than 180 days, both surrender progresses in 0.05..0.55,
+# neither rose by more than 0.08 over the tracked half year, pair casualties at least 300k.
+# Frozen score is 0.12. No shared front: longer than 120 days, score 0.05.
+# Reparations subtract 0.08, 0.15, or 0.25. A tier is hidden when the remainder is below 0.05.
+# Medium and heavy exist only for an advantage. Cooldown after a refusal is 180 days.
+
+hoimod_monthly_update = {
+	if = {
+		limit = { has_war = yes }
+		set_variable = { hoimod_sp_6 = hoimod_sp_5 }
+		set_variable = { hoimod_sp_5 = hoimod_sp_4 }
+		set_variable = { hoimod_sp_4 = hoimod_sp_3 }
+		set_variable = { hoimod_sp_3 = hoimod_sp_2 }
+		set_variable = { hoimod_sp_2 = hoimod_sp_1 }
+		set_variable = { hoimod_sp_1 = hoimod_sp_0 }
+		set_variable = { hoimod_sp_0 = surrender_progress }
+		add_to_variable = { hoimod_sp_samples = 1 }
+		set_temp_variable = { rise = hoimod_sp_0 }
+		subtract_from_temp_variable = { rise = hoimod_sp_6 }
+		set_variable = { hoimod_sp_rise = rise }
+
+		every_enemy_country = {
+			limit = { is_subject = no }
+			PREV = {
+				set_variable = { hoimod_case@PREV = 0 }
+				set_variable = { hoimod_ai_weight@PREV = 0 }
+				set_variable = { hoimod_can_light@PREV = 0 }
+				set_variable = { hoimod_can_medium@PREV = 0 }
+				set_variable = { hoimod_can_heavy@PREV = 0 }
+			}
+			save_event_target_as = hoimod_pair_enemy
+			PREV = { hoimod_update_pair = yes }
+		}
+	}
+	else = {
+		set_variable = { hoimod_sp_samples = 0 }
+		set_variable = { hoimod_sp_rise = 0 }
+	}
+}
+
+hoimod_measure_inflicted = {
+	set_temp_variable = { lo = 0 }
+	if = {
+		limit = { check_variable = { hoimod_count_ours = 1 } }
+		event_target:hoimod_pair_enemy = {
+			if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 19999 } }
+				ROOT = { set_temp_variable = { lo = 20000 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 11999 } }
+				ROOT = { set_temp_variable = { lo = 12000 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 7999 } }
+				ROOT = { set_temp_variable = { lo = 8000 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 4999 } }
+				ROOT = { set_temp_variable = { lo = 5000 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 2999 } }
+				ROOT = { set_temp_variable = { lo = 3000 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 1999 } }
+				ROOT = { set_temp_variable = { lo = 2000 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 1499 } }
+				ROOT = { set_temp_variable = { lo = 1500 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 999 } }
+				ROOT = { set_temp_variable = { lo = 1000 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 599 } }
+				ROOT = { set_temp_variable = { lo = 600 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 399 } }
+				ROOT = { set_temp_variable = { lo = 400 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 299 } }
+				ROOT = { set_temp_variable = { lo = 300 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 199 } }
+				ROOT = { set_temp_variable = { lo = 200 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 149 } }
+				ROOT = { set_temp_variable = { lo = 150 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 99 } }
+				ROOT = { set_temp_variable = { lo = 100 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 49 } }
+				ROOT = { set_temp_variable = { lo = 50 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 24 } }
+				ROOT = { set_temp_variable = { lo = 25 } }
+			}
+			else_if = {
+				limit = { casualties_inflicted_by = { opponent = ROOT thousands > 9 } }
+				ROOT = { set_temp_variable = { lo = 10 } }
+			}
+		}
+	}
+	else = {
+		event_target:hoimod_pair_enemy = {
+			ROOT = {
+				if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 19999 } }
+					set_temp_variable = { lo = 20000 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 11999 } }
+					set_temp_variable = { lo = 12000 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 7999 } }
+					set_temp_variable = { lo = 8000 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 4999 } }
+					set_temp_variable = { lo = 5000 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 2999 } }
+					set_temp_variable = { lo = 3000 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 1999 } }
+					set_temp_variable = { lo = 2000 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 1499 } }
+					set_temp_variable = { lo = 1500 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 999 } }
+					set_temp_variable = { lo = 1000 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 599 } }
+					set_temp_variable = { lo = 600 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 399 } }
+					set_temp_variable = { lo = 400 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 299 } }
+					set_temp_variable = { lo = 300 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 199 } }
+					set_temp_variable = { lo = 200 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 149 } }
+					set_temp_variable = { lo = 150 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 99 } }
+					set_temp_variable = { lo = 100 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 49 } }
+					set_temp_variable = { lo = 50 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 24 } }
+					set_temp_variable = { lo = 25 }
+				}
+				else_if = {
+					limit = { casualties_inflicted_by = { opponent = PREV thousands > 9 } }
+					set_temp_variable = { lo = 10 }
+				}
+			}
+		}
+	}
+	set_variable = { hoimod_measured = lo }
+}
+
+hoimod_update_pair = {
+	set_variable = { hoimod_pair_enemy_var = event_target:hoimod_pair_enemy }
+
+	set_temp_variable = { hoimod_len = global.num_days }
+	subtract_from_temp_variable = { hoimod_len = hoimod_war_start@var:hoimod_pair_enemy_var }
+
+	set_variable = { hoimod_pair_count = 0 }
+	every_controlled_state = {
+		limit = { is_owned_by = event_target:hoimod_pair_enemy }
+		add_to_variable = { PREV.hoimod_pair_count = 1 }
+	}
+	set_temp_variable = { hoimod_i_hold = hoimod_pair_count }
+
+	event_target:hoimod_pair_enemy = {
+		set_variable = { hoimod_pair_count = 0 }
+		every_controlled_state = {
+			limit = { is_owned_by = ROOT }
+			add_to_variable = { PREV.hoimod_pair_count = 1 }
+		}
+	}
+	set_temp_variable = { hoimod_they_hold = event_target:hoimod_pair_enemy.hoimod_pair_count }
+
+	set_temp_variable = { hoimod_count_ours = 1 }
+	hoimod_measure_inflicted = yes
+	set_temp_variable = { hoimod_us_on_them = hoimod_measured }
+
+	set_temp_variable = { hoimod_count_ours = 0 }
+	hoimod_measure_inflicted = yes
+	set_temp_variable = { hoimod_them_on_us = hoimod_measured }
+
+	set_temp_variable = { denom = hoimod_us_on_them }
+	add_to_temp_variable = { denom = hoimod_them_on_us }
+	add_to_temp_variable = { denom = 80 }
+	set_temp_variable = { our_share = hoimod_us_on_them }
+	divide_temp_variable = { our_share = denom }
+	set_temp_variable = { their_share = hoimod_them_on_us }
+	divide_temp_variable = { their_share = denom }
+
+	set_temp_variable = { lev_us = event_target:hoimod_pair_enemy.surrender_progress }
+	multiply_temp_variable = { lev_us = 0.70 }
+	set_temp_variable = { share_part = our_share }
+	multiply_temp_variable = { share_part = 0.30 }
+	add_to_temp_variable = { lev_us = share_part }
+
+	set_temp_variable = { lev_them = surrender_progress }
+	multiply_temp_variable = { lev_them = 0.70 }
+	set_temp_variable = { share_part = their_share }
+	multiply_temp_variable = { share_part = 0.30 }
+	add_to_temp_variable = { lev_them = share_part }
+
+	set_temp_variable = { signed = lev_us }
+	subtract_from_temp_variable = { signed = lev_them }
+	set_temp_variable = { gap = signed }
+	if = {
+		limit = { check_variable = { gap < 0 } }
+		multiply_temp_variable = { gap = -1 }
+	}
+
+	set_temp_variable = { cas_sum = hoimod_us_on_them }
+	add_to_temp_variable = { cas_sum = hoimod_them_on_us }
+
+	set_temp_variable = { case = 0 }
+	set_temp_variable = { base_score = 0 }
+	if = {
+		limit = {
+			check_variable = { hoimod_len > 89 }
+			OR = {
+				check_variable = { lev_us > 0.349 }
+				check_variable = { lev_them > 0.349 }
+			}
+			check_variable = { gap > 0.199 }
+		}
+		set_temp_variable = { case = 1 }
+		set_temp_variable = { base_score = gap }
+		clamp_temp_variable = { var = base_score min = 0.20 max = 0.85 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { hoimod_len > 179 }
+			check_variable = { hoimod_sp_samples > 6 }
+			check_variable = { event_target:hoimod_pair_enemy.hoimod_sp_samples > 6 }
+			surrender_progress > 0.049
+			NOT = { surrender_progress > 0.55 }
+			event_target:hoimod_pair_enemy = {
+				surrender_progress > 0.049
+				NOT = { surrender_progress > 0.55 }
+			}
+			check_variable = { hoimod_sp_rise < 0.081 }
+			check_variable = { event_target:hoimod_pair_enemy.hoimod_sp_rise < 0.081 }
+			check_variable = { cas_sum > 299 }
+		}
+		set_temp_variable = { case = 2 }
+		set_temp_variable = { base_score = 0.12 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { hoimod_len > 119 }
+			NOT = {
+				any_controlled_state = {
+					any_neighbor_state = {
+						is_controlled_by = event_target:hoimod_pair_enemy
+					}
+				}
+			}
+			check_variable = { hoimod_i_hold < 2 }
+			check_variable = { hoimod_they_hold < 2 }
+		}
+		set_temp_variable = { case = 3 }
+		set_temp_variable = { base_score = 0.05 }
+	}
+
+	set_temp_variable = { light = base_score }
+	subtract_from_temp_variable = { light = 0.08 }
+	set_temp_variable = { medium = base_score }
+	subtract_from_temp_variable = { medium = 0.15 }
+	set_temp_variable = { heavy = base_score }
+	subtract_from_temp_variable = { heavy = 0.25 }
+
+	set_variable = { hoimod_case@var:hoimod_pair_enemy_var = case }
+	set_variable = { hoimod_base_score@var:hoimod_pair_enemy_var = base_score }
+	set_variable = { hoimod_lev@var:hoimod_pair_enemy_var = lev_us }
+	set_variable = { hoimod_their_lev@var:hoimod_pair_enemy_var = lev_them }
+	set_variable = { hoimod_gap@var:hoimod_pair_enemy_var = gap }
+	set_variable = { hoimod_signed_gap@var:hoimod_pair_enemy_var = signed }
+	set_variable = { hoimod_us_on_them@var:hoimod_pair_enemy_var = hoimod_us_on_them }
+	set_variable = { hoimod_them_on_us@var:hoimod_pair_enemy_var = hoimod_them_on_us }
+	set_variable = { hoimod_can_light@var:hoimod_pair_enemy_var = 0 }
+	set_variable = { hoimod_can_medium@var:hoimod_pair_enemy_var = 0 }
+	set_variable = { hoimod_can_heavy@var:hoimod_pair_enemy_var = 0 }
+	if = {
+		limit = { check_variable = { light > 0.049 } }
+		set_variable = { hoimod_can_light@var:hoimod_pair_enemy_var = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { case = 1 }
+			check_variable = { medium > 0.049 }
+		}
+		set_variable = { hoimod_can_medium@var:hoimod_pair_enemy_var = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { case = 1 }
+			check_variable = { heavy > 0.049 }
+		}
+		set_variable = { hoimod_can_heavy@var:hoimod_pair_enemy_var = 1 }
+	}
+
+	set_temp_variable = { aiw = 0 }
+	if = {
+		limit = {
+			check_variable = { case = 1 }
+			check_variable = { signed > 0.199 }
+		}
+		set_temp_variable = { aiw = gap }
+		subtract_from_temp_variable = { aiw = 0.20 }
+		divide_temp_variable = { aiw = 0.40 }
+		multiply_temp_variable = { aiw = 25 }
+		add_to_temp_variable = { aiw = 70 }
+		clamp_temp_variable = { var = aiw min = 70 max = 95 }
+	}
+	else_if = {
+		limit = {
+			check_variable = { case = 1 }
+			check_variable = { signed < -0.199 }
+		}
+		set_temp_variable = { aiw = 25 }
+		if = {
+			limit = { surrender_progress > 0.399 }
+			set_temp_variable = { aiw = 60 }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { case = 2 } }
+		set_temp_variable = { aiw = 55 }
+		if = {
+			limit = { check_variable = { hoimod_them_on_us > hoimod_us_on_them } }
+			add_to_temp_variable = { aiw = 20 }
+		}
+		set_temp_variable = { our_ic = num_of_factories }
+		set_temp_variable = { their_ic = event_target:hoimod_pair_enemy.num_of_factories }
+		set_temp_variable = { their_sp = event_target:hoimod_pair_enemy.surrender_progress }
+		if = {
+			limit = {
+				check_variable = { our_ic > their_ic }
+				check_variable = { surrender_progress < their_sp }
+			}
+			add_to_temp_variable = { aiw = -30 }
+		}
+	}
+	else_if = {
+		limit = { check_variable = { case = 3 } }
+		set_temp_variable = { aiw = 40 }
+		if = {
+			limit = { has_government = democratic }
+			add_to_temp_variable = { aiw = 20 }
+		}
+		if = {
+			limit = {
+				any_enemy_country = {
+					NOT = { tag = event_target:hoimod_pair_enemy }
+				}
+			}
+			add_to_temp_variable = { aiw = 20 }
+		}
+		if = {
+			limit = {
+				has_government = fascism
+				is_major = yes
+				has_wargoal_against = event_target:hoimod_pair_enemy
+			}
+			add_to_temp_variable = { aiw = -20 }
+		}
+	}
+	if = {
+		limit = { check_variable = { aiw < 0 } }
+		set_temp_variable = { aiw = 0 }
+	}
+	set_variable = { hoimod_ai_weight@var:hoimod_pair_enemy_var = aiw }
+}
+
+hoimod_send_offer = {
+	if = {
+		limit = {
+			NOT = { has_country_flag = hoimod_offer_pending }
+			NOT = { is_in_peace_conference = yes }
+		}
+		FROM = { save_event_target_as = hoimod_pair_enemy }
+		hoimod_update_pair = yes
+		if = {
+			limit = {
+				check_variable = { hoimod_case@var:hoimod_pair_enemy_var > 0 }
+				OR = {
+					check_variable = { hoimod_tier = 0 }
+					AND = {
+						check_variable = { hoimod_tier = 1 }
+						check_variable = { hoimod_can_light@var:hoimod_pair_enemy_var = 1 }
+					}
+					AND = {
+						check_variable = { hoimod_tier = 2 }
+						check_variable = { hoimod_can_medium@var:hoimod_pair_enemy_var = 1 }
+					}
+					AND = {
+						check_variable = { hoimod_tier = 3 }
+						check_variable = { hoimod_can_heavy@var:hoimod_pair_enemy_var = 1 }
+					}
+				}
+			}
+			set_temp_variable = { score = hoimod_base_score@var:hoimod_pair_enemy_var }
+			if = {
+				limit = { check_variable = { hoimod_tier = 1 } }
+				subtract_from_temp_variable = { score = 0.08 }
+			}
+			else_if = {
+				limit = { check_variable = { hoimod_tier = 2 } }
+				subtract_from_temp_variable = { score = 0.15 }
+			}
+			else_if = {
+				limit = { check_variable = { hoimod_tier = 3 } }
+				subtract_from_temp_variable = { score = 0.25 }
+			}
+			set_variable = { global.hoimod_score = score }
+			set_variable = { global.hoimod_case = hoimod_case@var:hoimod_pair_enemy_var }
+			set_variable = { global.hoimod_rep = hoimod_tier }
+			set_variable = { global.hoimod_gap = hoimod_gap@var:hoimod_pair_enemy_var }
+			set_variable = { global.hoimod_proposer = THIS }
+			set_variable = { global.hoimod_target = event_target:hoimod_pair_enemy }
+
+			set_temp_variable = { lev_us_now = hoimod_lev@var:hoimod_pair_enemy_var }
+			set_temp_variable = { lev_them_now = hoimod_their_lev@var:hoimod_pair_enemy_var }
+			if = {
+				limit = { NOT = { check_variable = { lev_us_now < lev_them_now } } }
+				set_variable = { global.hoimod_winner = THIS }
+				set_variable = { global.hoimod_loser = event_target:hoimod_pair_enemy }
+			}
+			else = {
+				set_variable = { global.hoimod_winner = event_target:hoimod_pair_enemy }
+				set_variable = { global.hoimod_loser = THIS }
+			}
+
+			set_temp_variable = { accept = 30 }
+			if = {
+				limit = { check_variable = { global.hoimod_case = 1 } }
+				if = {
+					limit = { check_variable = { hoimod_signed_gap@var:hoimod_pair_enemy_var > 0 } }
+					set_temp_variable = { accept = 30 }
+					if = {
+						limit = { event_target:hoimod_pair_enemy = { surrender_progress > 0.449 } }
+						set_temp_variable = { accept = 80 }
+					}
+				}
+				else = {
+					set_temp_variable = { accept = global.hoimod_gap }
+					subtract_from_temp_variable = { accept = 0.20 }
+					divide_temp_variable = { accept = 0.40 }
+					multiply_temp_variable = { accept = 25 }
+					add_to_temp_variable = { accept = 70 }
+					clamp_temp_variable = { var = accept min = 70 max = 95 }
+				}
+			}
+			else_if = {
+				limit = { check_variable = { global.hoimod_case = 2 } }
+				set_temp_variable = { accept = 55 }
+				if = {
+					limit = { check_variable = { hoimod_us_on_them@var:hoimod_pair_enemy_var > hoimod_them_on_us@var:hoimod_pair_enemy_var } }
+					add_to_temp_variable = { accept = 20 }
+				}
+				set_temp_variable = { our_ic = num_of_factories }
+				set_temp_variable = { their_ic = event_target:hoimod_pair_enemy.num_of_factories }
+				if = {
+					limit = {
+						check_variable = { their_ic > our_ic }
+						event_target:hoimod_pair_enemy = { surrender_progress < ROOT.surrender_progress }
+					}
+					add_to_temp_variable = { accept = -30 }
+				}
+			}
+			else = {
+				set_temp_variable = { accept = 40 }
+				if = {
+					limit = { event_target:hoimod_pair_enemy = { has_government = democratic } }
+					add_to_temp_variable = { accept = 20 }
+				}
+				if = {
+					limit = {
+						event_target:hoimod_pair_enemy = {
+							any_enemy_country = {
+								NOT = { tag = ROOT }
+							}
+						}
+					}
+					add_to_temp_variable = { accept = 20 }
+				}
+				if = {
+					limit = {
+						event_target:hoimod_pair_enemy = {
+							has_government = fascism
+							is_major = yes
+							has_wargoal_against = ROOT
+						}
+					}
+					add_to_temp_variable = { accept = -20 }
+				}
+			}
+			clamp_temp_variable = { var = accept min = 1 max = 99 }
+			set_variable = { global.hoimod_accept_weight = accept }
+			set_temp_variable = { reject = 100 }
+			subtract_from_temp_variable = { reject = accept }
+			set_variable = { global.hoimod_reject_weight = reject }
+
+			event_target:hoimod_pair_enemy = {
+				if = {
+					limit = { is_in_faction = yes }
+					faction_leader = { save_event_target_as = hoimod_receiver }
+				}
+				else = {
+					save_event_target_as = hoimod_receiver
+				}
+			}
+			set_variable = { global.hoimod_receiver = event_target:hoimod_receiver }
+			set_country_flag = hoimod_offer_pending
+			event_target:hoimod_receiver = {
+				set_country_flag = hoimod_offer_pending
+				country_event = { id = hoimod2.1 }
+			}
+			event_target:hoimod_pair_enemy = { set_country_flag = hoimod_offer_pending }
+		}
+	}
+}
+
+hoimod_accept_offer = {
+	if = {
+		limit = { check_variable = { global.hoimod_case = 2 } }
+		hoimod_transfer_frozen = yes
+	}
+	if = {
+		limit = { check_variable = { global.hoimod_rep > 0 } }
+		var:global.hoimod_winner = {
+			set_country_flag = hoimod_rep_receiver
+			set_variable = { hoimod_rep_tier = global.hoimod_rep }
+			set_variable = { hoimod_rep_payer = global.hoimod_loser }
+		}
+		var:global.hoimod_loser = { set_country_flag = hoimod_rep_payer }
+	}
+	var:global.hoimod_winner = {
+		save_event_target_as = hoimod_winner_et
+		set_variable = { hoimod_pc_score = global.hoimod_score }
+		set_country_flag = hoimod_conference_active
+	}
+	var:global.hoimod_loser = { save_event_target_as = hoimod_loser_et }
+	var:global.hoimod_proposer = { set_country_flag = hoimod_conference_active }
+	var:global.hoimod_target = { set_country_flag = hoimod_conference_active }
+	hoimod_clear_offer_flags = yes
+	if = {
+		limit = { event_target:hoimod_winner_et = { is_in_faction = yes } }
+		event_target:hoimod_winner_et = {
+			start_peace_conference = {
+				tag = var:global.hoimod_loser
+				score_factor = global.hoimod_score
+				winner_scope = FACTION
+				loser_scope = LIMITED
+			}
+		}
+	}
+	else = {
+		event_target:hoimod_winner_et = {
+			start_peace_conference = {
+				tag = var:global.hoimod_loser
+				score_factor = global.hoimod_score
+				winner_scope = LIMITED
+				loser_scope = LIMITED
+			}
+		}
+	}
+}
+
+hoimod_transfer_frozen = {
+	every_country = {
+		limit = {
+			OR = {
+				tag = var:global.hoimod_winner
+				is_in_faction_with = var:global.hoimod_winner
+				AND = {
+					is_subject = yes
+					overlord = {
+						OR = {
+							tag = var:global.hoimod_winner
+							is_in_faction_with = var:global.hoimod_winner
+						}
+					}
+				}
+			}
+		}
+		every_controlled_state = {
+			limit = {
+				NOT = { is_capital = yes }
+				owner = {
+					OR = {
+						tag = var:global.hoimod_loser
+						is_subject_of = var:global.hoimod_loser
+					}
+				}
+			}
+			transfer_state_to = PREV
+		}
+	}
+	every_country = {
+		limit = {
+			OR = {
+				tag = var:global.hoimod_loser
+				is_subject_of = var:global.hoimod_loser
+			}
+		}
+		every_controlled_state = {
+			limit = {
+				NOT = { is_capital = yes }
+				owner = {
+					OR = {
+						tag = var:global.hoimod_winner
+						is_in_faction_with = var:global.hoimod_winner
+						is_subject_of = var:global.hoimod_winner
+					}
+				}
+			}
+			transfer_state_to = PREV
+		}
+	}
+}
+
+hoimod_reject_offer = {
+	var:global.hoimod_proposer = {
+		set_temp_variable = { until = global.num_days }
+		add_to_temp_variable = { until = 180 }
+		set_variable = { hoimod_cd_until@var:global.hoimod_target = until }
+	}
+	var:global.hoimod_target = {
+		set_temp_variable = { until = global.num_days }
+		add_to_temp_variable = { until = 180 }
+		set_variable = { hoimod_cd_until@var:global.hoimod_proposer = until }
+	}
+	var:global.hoimod_receiver = {
+		set_temp_variable = { until = global.num_days }
+		add_to_temp_variable = { until = 180 }
+		set_variable = { hoimod_cd_until@var:global.hoimod_proposer = until }
+	}
+	hoimod_clear_offer_flags = yes
+}
+
+hoimod_clear_offer_flags = {
+	var:global.hoimod_proposer = { clr_country_flag = hoimod_offer_pending }
+	var:global.hoimod_target = { clr_country_flag = hoimod_offer_pending }
+	var:global.hoimod_receiver = { clr_country_flag = hoimod_offer_pending }
+}
+
+hoimod_apply_reparations = {
+	if = {
+		limit = {
+			has_country_flag = hoimod_rep_receiver
+			check_variable = { hoimod_rep_tier > 0 }
+		}
+		var:hoimod_rep_payer = {
+			if = {
+				limit = {
+					exists = yes
+					any_owned_state = { always = yes }
+				}
+				if = {
+					limit = { check_variable = { PREV.hoimod_rep_tier = 1 } }
+					add_timed_idea = { idea = hoimod_rep_pay_light years = 1 }
+					PREV = { add_timed_idea = { idea = hoimod_rep_get_light years = 1 } }
+				}
+				else_if = {
+					limit = { check_variable = { PREV.hoimod_rep_tier = 2 } }
+					add_timed_idea = { idea = hoimod_rep_pay_medium years = 2 }
+					PREV = { add_timed_idea = { idea = hoimod_rep_get_medium years = 2 } }
+				}
+				else_if = {
+					limit = { check_variable = { PREV.hoimod_rep_tier = 3 } }
+					add_timed_idea = { idea = hoimod_rep_pay_heavy years = 3 }
+					PREV = { add_timed_idea = { idea = hoimod_rep_get_heavy years = 3 } }
+				}
+			}
+			clr_country_flag = hoimod_rep_payer
+		}
+	}
+	clr_country_flag = hoimod_rep_receiver
+	clr_country_flag = hoimod_conference_active
+	clr_country_flag = hoimod_offer_pending
+}

@@ -1,0 +1,28 @@
+ideas = {
+	country = {
+		hoimod_rep_pay_light = {
+			picture = GFX_idea_generic_foreign_capital
+			modifier = { consumer_goods_factor = 0.08 }
+		}
+		hoimod_rep_get_light = {
+			picture = GFX_idea_generic_goods_red_bonus
+			modifier = { consumer_goods_factor = -0.08 }
+		}
+		hoimod_rep_pay_medium = {
+			picture = GFX_idea_generic_foreign_capital
+			modifier = { consumer_goods_factor = 0.15 }
+		}
+		hoimod_rep_get_medium = {
+			picture = GFX_idea_generic_goods_red_bonus
+			modifier = { consumer_goods_factor = -0.15 }
+		}
+		hoimod_rep_pay_heavy = {
+			picture = GFX_idea_generic_foreign_capital
+			modifier = { consumer_goods_factor = 0.25 }
+		}
+		hoimod_rep_get_heavy = {
+			picture = GFX_idea_generic_goods_red_bonus
+			modifier = { consumer_goods_factor = -0.25 }
+		}
+	}
+}

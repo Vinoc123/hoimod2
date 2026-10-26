@@ -1,0 +1,33 @@
+defined_text = {
+	name = HoimodCase
+	text = {
+		trigger = { check_variable = { global.hoimod_case = 1 } }
+		localization_key = hoimod_case_advantage
+	}
+	text = {
+		trigger = { check_variable = { global.hoimod_case = 2 } }
+		localization_key = hoimod_case_frozen
+	}
+	text = {
+		localization_key = hoimod_case_nofront
+	}
+}
+
+defined_text = {
+	name = HoimodRep
+	text = {
+		trigger = { check_variable = { global.hoimod_rep = 1 } }
+		localization_key = hoimod_rep_light
+	}
+	text = {
+		trigger = { check_variable = { global.hoimod_rep = 2 } }
+		localization_key = hoimod_rep_medium
+	}
+	text = {
+		trigger = { check_variable = { global.hoimod_rep = 3 } }
+		localization_key = hoimod_rep_heavy
+	}
+	text = {
+		localization_key = hoimod_rep_none
+	}
+}

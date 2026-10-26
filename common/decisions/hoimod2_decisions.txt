@@ -1,0 +1,144 @@
+hoimod_peace_category = {
+
+	hoimod_offer_none = {
+		icon = generic_political_discourse
+		cost = 0
+		fire_only_once = no
+
+		target_root_trigger = {
+			OR = {
+				is_faction_leader = yes
+				is_in_faction = no
+			}
+		}
+
+		target_trigger = {
+			FROM = {
+				has_war_with = ROOT
+				is_subject = no
+				has_capitulated = no
+			}
+		}
+
+		visible = {
+			hoimod_can_call_peace = yes
+		}
+
+		ai_will_do = {
+			base = 0
+			modifier = {
+				add = var:hoimod_ai_weight@FROM
+			}
+		}
+
+		complete_effect = {
+			set_temp_variable = { hoimod_tier = 0 }
+			hoimod_send_offer = yes
+		}
+	}
+
+	hoimod_offer_light = {
+		icon = generic_political_discourse
+		cost = 0
+		fire_only_once = no
+
+		target_root_trigger = {
+			OR = {
+				is_faction_leader = yes
+				is_in_faction = no
+			}
+		}
+
+		target_trigger = {
+			FROM = {
+				has_war_with = ROOT
+				is_subject = no
+				has_capitulated = no
+			}
+		}
+
+		visible = {
+			hoimod_can_call_peace = yes
+			check_variable = { hoimod_can_light@FROM = 1 }
+		}
+
+		ai_will_do = {
+			base = 0
+		}
+
+		complete_effect = {
+			set_temp_variable = { hoimod_tier = 1 }
+			hoimod_send_offer = yes
+		}
+	}
+
+	hoimod_offer_medium = {
+		icon = generic_political_discourse
+		cost = 0
+		fire_only_once = no
+
+		target_root_trigger = {
+			OR = {
+				is_faction_leader = yes
+				is_in_faction = no
+			}
+		}
+
+		target_trigger = {
+			FROM = {
+				has_war_with = ROOT
+				is_subject = no
+				has_capitulated = no
+			}
+		}
+
+		visible = {
+			hoimod_can_call_peace = yes
+			check_variable = { hoimod_can_medium@FROM = 1 }
+		}
+
+		ai_will_do = {
+			base = 0
+		}
+
+		complete_effect = {
+			set_temp_variable = { hoimod_tier = 2 }
+			hoimod_send_offer = yes
+		}
+	}
+
+	hoimod_offer_heavy = {
+		icon = generic_political_discourse
+		cost = 0
+		fire_only_once = no
+
+		target_root_trigger = {
+			OR = {
+				is_faction_leader = yes
+				is_in_faction = no
+			}
+		}
+
+		target_trigger = {
+			FROM = {
+				has_war_with = ROOT
+				is_subject = no
+				has_capitulated = no
+			}
+		}
+
+		visible = {
+			hoimod_can_call_peace = yes
+			check_variable = { hoimod_can_heavy@FROM = 1 }
+		}
+
+		ai_will_do = {
+			base = 0
+		}
+
+		complete_effect = {
+			set_temp_variable = { hoimod_tier = 3 }
+			hoimod_send_offer = yes
+		}
+	}
+}

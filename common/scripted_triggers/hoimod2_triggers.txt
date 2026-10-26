@@ -1,0 +1,19 @@
+hoimod_can_call_peace = {
+	OR = {
+		is_faction_leader = yes
+		is_in_faction = no
+	}
+	has_war_with = FROM
+	FROM = {
+		is_subject = no
+		has_capitulated = no
+		NOT = { is_in_peace_conference = yes }
+		NOT = { has_country_flag = hoimod_offer_pending }
+		NOT = { has_country_flag = hoimod_conference_active }
+	}
+	NOT = { is_in_peace_conference = yes }
+	NOT = { has_country_flag = hoimod_offer_pending }
+	NOT = { has_country_flag = hoimod_conference_active }
+	check_variable = { hoimod_case@FROM > 0 }
+	NOT = { check_variable = { hoimod_cd_until@FROM > global.num_days } }
+}
