@@ -6,7 +6,7 @@
  hoimod_camp_construction_desc:0 "Lets fascist Germany build concentration camps in occupied states that are not German cores."
 
  hoimod_peace_category:0 "Peace Conference"
- hoimod_peace_category_desc:0 "Offer peace without capitulation. Points equal occupied regions plus casualties: one million net kills add one region, at most two up and one down. A region you occupy is cheap, and the rest of the country is not. If the enemy offers, the answer is here too, without a popup."
+ hoimod_peace_category_desc:0 "Offer peace without capitulation. This splits the front instead of letting you pick annexations. Each side keeps the other side's regions it already controls, at their normal price. Land you held before the war and still control stays yours. If the enemy offers, the answer is here too, without a popup."
 
  hoimod_answer_yes:0 "Accept the peace conference"
  hoimod_answer_yes_desc:0 "[hoimod_g_proposer.GetNameDefCap] offers a conference with [hoimod_g_target.GetNameDef]. Cause: [HoimodCase]. Reparations: [HoimodRep]."
@@ -14,7 +14,7 @@
  hoimod_answer_no_desc:0 "A refusal closes this pair for 180 days. Cause: [HoimodCase]. Reparations: [HoimodRep]."
 
  hoimod_offer_none:0 "Offer a conference to [From.GetNameDef]"
- hoimod_offer_none_desc:0 "No reparations. Regions held: [?ROOT.hoimod_held@FROM|0]. Casualties add [?ROOT.hoimod_cas_extra@FROM|+0]. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days. A dead front or a war with no front line in [?ROOT.hoimod_year_left@FROM|0] days."
+ hoimod_offer_none_desc:0 "No reparations. You hold [?ROOT.hoimod_held@FROM|0] regions, they hold [?ROOT.hoimod_they_held@FROM|0]. Each side keeps only that. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days. A dead front or a war with no front line in [?ROOT.hoimod_year_left@FROM|0] days."
  hoimod_offer_light:0 "Conference with light reparations: [From.GetNameDef]"
  hoimod_offer_light_desc:0 "One year of payments, 8% consumer goods. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days. A dead front or a war with no front line in [?ROOT.hoimod_year_left@FROM|0] days."
  hoimod_offer_medium:0 "Conference with moderate reparations: [From.GetNameDef]"
