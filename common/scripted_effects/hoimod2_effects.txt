@@ -3,9 +3,11 @@
 # Leverage = 0.70 * enemy surrender progress + 0.30 * our share of the pair's casualties.
 # Casualty share uses thousands and adds 80 before dividing.
 # Advantage: war longer than 90 days, best leverage at least 0.35, gap at least 0.20.
-# Negotiated score is 0.06 for every case. This is a draw, not a capitulation budget.
-# Occupied non-capital states are handed over before the window. Uncontrolled land is priced as a draw.
-# Frozen front and no shared front: longer than 365 days. Frozen score rules are otherwise unchanged.
+# Frozen front and no shared front: longer than 365 days.
+# Conference score is not a capitulation budget. It is the share of the loser's states
+# the winning side already controls, so the points match the occupied regions.
+# A state you control is cheap. A state you do not control stays expensive.
+# Land the loser already controls is handed over before the window.
 
 hoimod_monthly_update = {
 	if = {
@@ -266,7 +268,7 @@ hoimod_update_pair = {
 			check_variable = { gap > 0.199 }
 		}
 		set_temp_variable = { case = 1 }
-		set_temp_variable = { base_score = 0.06 }
+		set_temp_variable = { base_score = 0 }
 	}
 	else_if = {
 		limit = {
@@ -284,7 +286,7 @@ hoimod_update_pair = {
 			check_variable = { cas_sum > 299 }
 		}
 		set_temp_variable = { case = 2 }
-		set_temp_variable = { base_score = 0.06 }
+		set_temp_variable = { base_score = 0 }
 	}
 	else_if = {
 		limit = {
@@ -300,7 +302,7 @@ hoimod_update_pair = {
 			check_variable = { hoimod_they_hold < 2 }
 		}
 		set_temp_variable = { case = 3 }
-		set_temp_variable = { base_score = 0.06 }
+		set_temp_variable = { base_score = 0 }
 	}
 
 	set_temp_variable = { adv_left = 90 }
@@ -324,6 +326,8 @@ hoimod_update_pair = {
 	set_variable = { hoimod_signed_gap@var:hoimod_pair_enemy_var = signed }
 	set_variable = { hoimod_us_on_them@var:hoimod_pair_enemy_var = hoimod_us_on_them }
 	set_variable = { hoimod_them_on_us@var:hoimod_pair_enemy_var = hoimod_them_on_us }
+	set_variable = { hoimod_held@var:hoimod_pair_enemy_var = hoimod_i_hold }
+	set_variable = { hoimod_they_held@var:hoimod_pair_enemy_var = hoimod_they_hold }
 	set_variable = { hoimod_adv_left@var:hoimod_pair_enemy_var = adv_left }
 	set_variable = { hoimod_year_left@var:hoimod_pair_enemy_var = year_left }
 	set_variable = { hoimod_can_light@var:hoimod_pair_enemy_var = 0 }
@@ -558,6 +562,7 @@ hoimod_send_offer = {
 
 hoimod_accept_offer = {
 	hoimod_transfer_frozen = yes
+	hoimod_score_from_control = yes
 	if = {
 		limit = { check_variable = { global.hoimod_rep > 0 } }
 		var:global.hoimod_winner = {
@@ -579,25 +584,12 @@ hoimod_accept_offer = {
 	var:global.hoimod_proposer = { set_country_flag = hoimod_conference_active }
 	var:global.hoimod_target = { set_country_flag = hoimod_conference_active }
 	hoimod_clear_offer_flags = yes
-	if = {
-		limit = { event_target:hoimod_winner_et = { is_in_faction = yes } }
-		event_target:hoimod_winner_et = {
-			start_peace_conference = {
-				tag = var:global.hoimod_loser
-				score_factor = global.hoimod_score
-				winner_scope = FACTION
-				loser_scope = LIMITED
-			}
-		}
-	}
-	else = {
-		event_target:hoimod_winner_et = {
-			start_peace_conference = {
-				tag = var:global.hoimod_loser
-				score_factor = global.hoimod_score
-				winner_scope = LIMITED
-				loser_scope = LIMITED
-			}
+	event_target:hoimod_winner_et = {
+		start_peace_conference = {
+			tag = var:global.hoimod_loser
+			score_factor = global.hoimod_score
+			winner_scope = LIMITED
+			loser_scope = LIMITED
 		}
 	}
 }
@@ -605,23 +597,18 @@ hoimod_accept_offer = {
 hoimod_transfer_frozen = {
 	every_country = {
 		limit = {
+			NOT = { tag = var:global.hoimod_winner }
 			OR = {
-				tag = var:global.hoimod_winner
 				is_in_faction_with = var:global.hoimod_winner
+				is_subject_of = var:global.hoimod_winner
 				AND = {
 					is_subject = yes
-					overlord = {
-						OR = {
-							tag = var:global.hoimod_winner
-							is_in_faction_with = var:global.hoimod_winner
-						}
-					}
+					overlord = { is_in_faction_with = var:global.hoimod_winner }
 				}
 			}
 		}
 		every_controlled_state = {
 			limit = {
-				NOT = { is_capital = yes }
 				owner = {
 					OR = {
 						tag = var:global.hoimod_loser
@@ -641,7 +628,6 @@ hoimod_transfer_frozen = {
 		}
 		every_controlled_state = {
 			limit = {
-				NOT = { is_capital = yes }
 				owner = {
 					OR = {
 						tag = var:global.hoimod_winner
@@ -652,6 +638,37 @@ hoimod_transfer_frozen = {
 			}
 			transfer_state_to = PREV
 		}
+	}
+}
+
+hoimod_score_from_control = {
+	set_variable = { global.hoimod_held = 0 }
+	set_variable = { global.hoimod_total = 0 }
+	every_state = {
+		limit = {
+			owner = {
+				OR = {
+					tag = var:global.hoimod_loser
+					is_subject_of = var:global.hoimod_loser
+				}
+			}
+		}
+		add_to_variable = { global.hoimod_total = 1 }
+		if = {
+			limit = {
+				controller = { tag = var:global.hoimod_winner }
+			}
+			add_to_variable = { global.hoimod_held = 1 }
+		}
+	}
+	set_variable = { global.hoimod_score = 0 }
+	if = {
+		limit = {
+			check_variable = { global.hoimod_total > 0 }
+			check_variable = { global.hoimod_held > 0 }
+		}
+		set_variable = { global.hoimod_score = global.hoimod_held }
+		divide_variable = { global.hoimod_score = global.hoimod_total }
 	}
 }
 

@@ -1,5 +1,17 @@
 peace_action_modifiers = {
 
+	hoimod_draw_controlled = {
+		category = occupation
+		peace_action_type = take_states
+
+		enable = {
+			ROOT = { has_country_flag = hoimod_conference_active }
+			FROM.FROM.FROM = { is_controlled_by = ROOT }
+		}
+
+		cost_multiplier = 0.35
+	}
+
 	hoimod_draw_uncontrolled = {
 		category = occupation
 		peace_action_type = take_states
@@ -11,7 +23,7 @@ peace_action_modifiers = {
 			}
 		}
 
-		cost_multiplier = 8
+		cost_multiplier = 4
 	}
 
 	hoimod_draw_puppet = {
@@ -22,6 +34,6 @@ peace_action_modifiers = {
 			ROOT = { has_country_flag = hoimod_conference_active }
 		}
 
-		cost_multiplier = 6
+		cost_multiplier = 4
 	}
 }

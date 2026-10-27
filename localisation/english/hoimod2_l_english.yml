@@ -6,7 +6,7 @@
  hoimod_camp_construction_desc:0 "Lets fascist Germany build concentration camps in occupied states that are not German cores."
 
  hoimod_peace_category:0 "Peace Conference"
- hoimod_peace_category_desc:0 "Offer peace without capitulation. If the enemy offers, the answer is here too, without a popup."
+ hoimod_peace_category_desc:0 "Offer peace without capitulation. The winner's points equal the enemy regions they already control. A region you occupy is cheap, and the rest of the country is not. If the enemy offers, the answer is here too, without a popup."
 
  hoimod_answer_yes:0 "Accept the peace conference"
  hoimod_answer_yes_desc:0 "[hoimod_g_proposer.GetNameDefCap] offers a conference with [hoimod_g_target.GetNameDef]. Cause: [HoimodCase]. Reparations: [HoimodRep]."
@@ -14,7 +14,7 @@
  hoimod_answer_no_desc:0 "A refusal closes this pair for 180 days. Cause: [HoimodCase]. Reparations: [HoimodRep]."
 
  hoimod_offer_none:0 "Offer a conference to [From.GetNameDef]"
- hoimod_offer_none_desc:0 "No reparations. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days. A dead front or a war with no front line in [?ROOT.hoimod_year_left@FROM|0] days."
+ hoimod_offer_none_desc:0 "No reparations. Regions held: [?ROOT.hoimod_held@FROM|0]. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days. A dead front or a war with no front line in [?ROOT.hoimod_year_left@FROM|0] days."
  hoimod_offer_light:0 "Conference with light reparations: [From.GetNameDef]"
  hoimod_offer_light_desc:0 "One year of payments, 8% consumer goods. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days. A dead front or a war with no front line in [?ROOT.hoimod_year_left@FROM|0] days."
  hoimod_offer_medium:0 "Conference with moderate reparations: [From.GetNameDef]"
