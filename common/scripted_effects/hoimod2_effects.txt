@@ -5,7 +5,8 @@
 # Advantage: war longer than 90 days, best leverage at least 0.35, gap at least 0.20.
 # Frozen front and no shared front: longer than 365 days.
 # Conference score is not a capitulation budget. It is the share of the loser's states
-# the winning side already controls, so the points match the occupied regions.
+# the winning side already controls, plus a small casualty adjustment:
+# 1 million net kills add one region of budget, capped at +2 and -1.
 # A state you control is cheap. A state you do not control stays expensive.
 # Land the loser already controls is handed over before the window.
 
@@ -328,6 +329,11 @@ hoimod_update_pair = {
 	set_variable = { hoimod_them_on_us@var:hoimod_pair_enemy_var = hoimod_them_on_us }
 	set_variable = { hoimod_held@var:hoimod_pair_enemy_var = hoimod_i_hold }
 	set_variable = { hoimod_they_held@var:hoimod_pair_enemy_var = hoimod_they_hold }
+	set_temp_variable = { cas_extra = hoimod_us_on_them }
+	subtract_from_temp_variable = { cas_extra = hoimod_them_on_us }
+	divide_temp_variable = { cas_extra = 1000 }
+	clamp_temp_variable = { var = cas_extra min = -1 max = 2 }
+	set_variable = { hoimod_cas_extra@var:hoimod_pair_enemy_var = cas_extra }
 	set_variable = { hoimod_adv_left@var:hoimod_pair_enemy_var = adv_left }
 	set_variable = { hoimod_year_left@var:hoimod_pair_enemy_var = year_left }
 	set_variable = { hoimod_can_light@var:hoimod_pair_enemy_var = 0 }
@@ -661,13 +667,31 @@ hoimod_score_from_control = {
 			add_to_variable = { global.hoimod_held = 1 }
 		}
 	}
+	set_temp_variable = { cas_extra = 0 }
+	var:global.hoimod_winner = {
+		set_variable = { hoimod_score_loser_var = global.hoimod_loser }
+		set_temp_variable = { inflicted = hoimod_us_on_them@var:hoimod_score_loser_var }
+		set_temp_variable = { suffered = hoimod_them_on_us@var:hoimod_score_loser_var }
+		set_variable = { global.hoimod_inflicted = inflicted }
+		set_variable = { global.hoimod_suffered = suffered }
+	}
+	set_temp_variable = { cas_extra = global.hoimod_inflicted }
+	subtract_from_temp_variable = { cas_extra = global.hoimod_suffered }
+	divide_temp_variable = { cas_extra = 1000 }
+	clamp_temp_variable = { var = cas_extra min = -1 max = 2 }
+	set_temp_variable = { states = global.hoimod_held }
+	add_to_temp_variable = { states = cas_extra }
+	if = {
+		limit = { check_variable = { states < 0 } }
+		set_temp_variable = { states = 0 }
+	}
 	set_variable = { global.hoimod_score = 0 }
 	if = {
 		limit = {
 			check_variable = { global.hoimod_total > 0 }
-			check_variable = { global.hoimod_held > 0 }
+			check_variable = { states > 0 }
 		}
-		set_variable = { global.hoimod_score = global.hoimod_held }
+		set_variable = { global.hoimod_score = states }
 		divide_variable = { global.hoimod_score = global.hoimod_total }
 	}
 }

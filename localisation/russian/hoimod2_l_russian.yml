@@ -6,7 +6,7 @@
  hoimod_camp_construction_desc:0 "Позволяет фашистской Германии строить концлагеря в оккупированных регионах, которые не являются её ядрами."
 
  hoimod_peace_category:0 "Мирная конференция"
- hoimod_peace_category_desc:0 "Предложить мир без капитуляции. Очки в окне равны числу регионов противника, которые уже занимает победитель. Свой занятый регион выкупается дёшево, остальная страна нет. Если предлагает противник, ответ тоже здесь, без всплывающего окна."
+ hoimod_peace_category_desc:0 "Предложить мир без капитуляции. Очки в окне равны занятым регионам и потерям: миллион чистого перевеса даёт один регион, максимум два сверху и один вниз. Свой занятый регион выкупается дёшево, остальная страна нет. Если предлагает противник, ответ тоже здесь, без всплывающего окна."
 
  hoimod_answer_yes:0 "Принять мирную конференцию"
  hoimod_answer_yes_desc:0 "[hoimod_g_proposer.GetNameDefCap] предлагает конференцию с [hoimod_g_target.GetNameDef]. Повод: [HoimodCase]. Репарации: [HoimodRep]."
@@ -14,7 +14,7 @@
  hoimod_answer_no_desc:0 "Отказ закроет эту пару на 180 дней. Повод: [HoimodCase]. Репарации: [HoimodRep]."
 
  hoimod_offer_none:0 "Предложить конференцию [From.GetNameDef]"
- hoimod_offer_none_desc:0 "Без репараций. Занято регионов: [?ROOT.hoimod_held@FROM|0]. До преимущества осталось [?ROOT.hoimod_adv_left@FROM|0] дн. До мёртвого фронта и войны без линии фронта осталось [?ROOT.hoimod_year_left@FROM|0] дн."
+ hoimod_offer_none_desc:0 "Без репараций. Занято регионов: [?ROOT.hoimod_held@FROM|0]. Потери дают [?ROOT.hoimod_cas_extra@FROM|+0]. До преимущества осталось [?ROOT.hoimod_adv_left@FROM|0] дн. До мёртвого фронта и войны без линии фронта осталось [?ROOT.hoimod_year_left@FROM|0] дн."
  hoimod_offer_light:0 "Конференция с лёгкими репарациями: [From.GetNameDef]"
  hoimod_offer_light_desc:0 "Год выплат, 8% товаров. До преимущества осталось [?ROOT.hoimod_adv_left@FROM|0] дн. До мёртвого фронта и войны без линии фронта осталось [?ROOT.hoimod_year_left@FROM|0] дн."
  hoimod_offer_medium:0 "Конференция со средними репарациями: [From.GetNameDef]"
