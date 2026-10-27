@@ -1,0 +1,14 @@
+HOIMOD_BENCH_A = {
+	color = rgb { 90 90 90 }
+	color_ui = rgb { 120 120 120 }
+}
+
+HOIMOD_BENCH_B = {
+	color = rgb { 60 60 60 }
+	color_ui = rgb { 90 90 90 }
+}
+
+HOIMOD_VAULT = {
+	color = rgb { 40 40 40 }
+	color_ui = rgb { 40 40 40 }
+}

@@ -4,10 +4,11 @@
 # Casualty share uses thousands and adds 80 before dividing.
 # Advantage: war longer than 90 days, best leverage at least 0.35, gap at least 0.20.
 # Frozen front and no shared front: longer than 365 days.
-# The peace is a split, not an annexation menu.
-# Each side receives the other side's states it already controls, at full price.
-# A state that belonged to its owner and is still controlled by that owner stays.
-# Prices are not discounted. There is no extra budget for unoccupied land.
+# The peace opens a real conference. Both countries sit as one losing alliance.
+# Each player is moved to an off-map bench country. Those two benches divide only the
+# disputed states: land a side still holds that it already owned stays off the table.
+# Score is 1/1.35 of the disputed land, so the table can buy that land at full price.
+# Afterwards each bench's states return to its original country.
 
 hoimod_monthly_update = {
 	if = {
@@ -561,7 +562,159 @@ hoimod_send_offer = {
 }
 
 hoimod_accept_offer = {
-	hoimod_transfer_frozen = yes
+	custom_effect_tooltip = hoimod_split_tt
+	hidden_effect = {
+		set_variable = { global.hoimod_side_a = global.hoimod_proposer }
+		set_variable = { global.hoimod_side_b = global.hoimod_target }
+		hoimod_open_split = yes
+	}
+}
+
+hoimod_init_bench = {
+	reserve_dynamic_country = yes
+	load_focus_tree = generic_focus
+	set_popularities = { neutrality = 100 }
+	set_politics = { ruling_party = neutrality elections_allowed = no }
+	create_country_leader = {
+		name = "Delegate"
+		expire = "1965.1.1"
+		ideology = despotism
+	}
+}
+
+hoimod_which_side = {
+	set_variable = { global.hoimod_which_side = 0 }
+	if = {
+		limit = {
+			OR = {
+				tag = var:global.hoimod_side_a
+				is_subject_of = var:global.hoimod_side_a
+				is_in_faction_with = var:global.hoimod_side_a
+				AND = {
+					is_subject = yes
+					overlord = { is_in_faction_with = var:global.hoimod_side_a }
+				}
+			}
+		}
+		set_variable = { global.hoimod_which_side = 1 }
+	}
+	else_if = {
+		limit = {
+			OR = {
+				tag = var:global.hoimod_side_b
+				is_subject_of = var:global.hoimod_side_b
+				is_in_faction_with = var:global.hoimod_side_b
+				AND = {
+					is_subject = yes
+					overlord = { is_in_faction_with = var:global.hoimod_side_b }
+				}
+			}
+		}
+		set_variable = { global.hoimod_which_side = 2 }
+	}
+}
+
+hoimod_mark_states = {
+	set_variable = { global.hoimod_pot = 0 }
+	add_to_variable = { global.hoimod_mark_id = 1 }
+	every_state = {
+		limit = {
+			owner = {
+				OR = {
+					tag = var:global.hoimod_side_a
+					tag = var:global.hoimod_side_b
+					is_subject_of = var:global.hoimod_side_a
+					is_subject_of = var:global.hoimod_side_b
+				}
+			}
+		}
+		owner = { hoimod_which_side = yes }
+		set_variable = { hoimod_owner_side = global.hoimod_which_side }
+		controller = { hoimod_which_side = yes }
+		set_variable = { hoimod_ctrl_side = global.hoimod_which_side }
+		clear_variable = hoimod_claim
+		if = {
+			limit = {
+				check_variable = { hoimod_owner_side = hoimod_ctrl_side }
+				check_variable = { hoimod_ctrl_side > 0 }
+			}
+			owner = { set_variable = { PREV.hoimod_return_owner = THIS } }
+			transfer_state_to = var:global.hoimod_vault
+		}
+		else = {
+			set_variable = { hoimod_claim = hoimod_ctrl_side }
+			set_variable = { hoimod_claim_mark = global.hoimod_mark_id }
+			add_to_variable = { global.hoimod_pot = 1 }
+		}
+	}
+}
+
+hoimod_white_peace_pair = {
+	clear_array = global.hoimod_wp_from
+	clear_array = global.hoimod_wp_to
+	set_variable = { global.hoimod_wp_i = 0 }
+	every_country = {
+		limit = {
+			OR = {
+				tag = var:global.hoimod_side_a
+				is_subject_of = var:global.hoimod_side_a
+				is_in_faction_with = var:global.hoimod_side_a
+				AND = {
+					is_subject = yes
+					overlord = { is_in_faction_with = var:global.hoimod_side_a }
+				}
+			}
+		}
+		every_enemy_country = {
+			limit = {
+				OR = {
+					tag = var:global.hoimod_side_b
+					is_subject_of = var:global.hoimod_side_b
+					is_in_faction_with = var:global.hoimod_side_b
+					AND = {
+						is_subject = yes
+						overlord = { is_in_faction_with = var:global.hoimod_side_b }
+					}
+				}
+			}
+			add_to_array = { global.hoimod_wp_to = THIS }
+			add_to_array = { global.hoimod_wp_from = PREV }
+		}
+	}
+	while_loop_effect = {
+		limit = { check_variable = { global.hoimod_wp_i < global.hoimod_wp_from^num } }
+		set_temp_variable = { i = global.hoimod_wp_i }
+		set_variable = { global.hoimod_wp_target = global.hoimod_wp_to^i }
+		var:global.hoimod_wp_from^i = {
+			white_peace = { tag = var:global.hoimod_wp_target }
+		}
+		add_to_variable = { global.hoimod_wp_i = 1 }
+	}
+}
+
+hoimod_leave_for_split = {
+	if = {
+		limit = { is_in_faction = yes is_faction_leader = no }
+		set_variable = { hoimod_old_leader = faction_leader }
+		leave_faction = yes
+	}
+	else_if = {
+		limit = {
+			is_faction_leader = yes
+			any_allied_country = { always = yes }
+		}
+		random_allied_country = { save_event_target_as = hoimod_keep_leader }
+		set_variable = { hoimod_old_leader = event_target:hoimod_keep_leader }
+		event_target:hoimod_keep_leader = { set_faction_leader = yes }
+		leave_faction = yes
+	}
+	else_if = {
+		limit = { is_faction_leader = yes }
+		dismantle_faction = yes
+	}
+}
+
+hoimod_open_split = {
 	if = {
 		limit = { check_variable = { global.hoimod_rep > 0 } }
 		var:global.hoimod_winner = {
@@ -571,64 +724,170 @@ hoimod_accept_offer = {
 		}
 		var:global.hoimod_loser = { set_country_flag = hoimod_rep_payer }
 	}
-	var:global.hoimod_winner = { save_event_target_as = hoimod_winner_et }
-	var:global.hoimod_loser = { save_event_target_as = hoimod_loser_et }
 	hoimod_clear_offer_flags = yes
-	event_target:hoimod_winner_et = {
-		start_peace_conference = {
-			tag = var:global.hoimod_loser
-			score_factor = 0
-			winner_scope = FACTION
-			loser_scope = LIMITED
+	create_dynamic_country = {
+		original_tag = KOM
+		hoimod_init_bench = yes
+		set_cosmetic_tag = HOIMOD_VAULT
+		set_variable = { global.hoimod_vault = THIS }
+	}
+	create_dynamic_country = {
+		original_tag = TAT
+		hoimod_init_bench = yes
+		set_cosmetic_tag = HOIMOD_BENCH_A
+		set_country_flag = hoimod_conference_active
+		set_variable = { global.hoimod_bench_a = THIS }
+	}
+	create_dynamic_country = {
+		original_tag = BUK
+		hoimod_init_bench = yes
+		set_cosmetic_tag = HOIMOD_BENCH_B
+		set_country_flag = hoimod_conference_active
+		set_variable = { global.hoimod_bench_b = THIS }
+	}
+	hoimod_mark_states = yes
+	if = {
+		limit = { check_variable = { global.hoimod_pot = 0 } }
+		var:global.hoimod_vault = {
+			every_owned_state = { transfer_state_to = var:hoimod_return_owner }
+			reserve_dynamic_country = no
+		}
+		var:global.hoimod_bench_a = { reserve_dynamic_country = no }
+		var:global.hoimod_bench_b = { reserve_dynamic_country = no }
+		hoimod_white_peace_pair = yes
+		if = {
+			limit = { var:global.hoimod_winner = { has_country_flag = hoimod_rep_receiver } }
+			var:global.hoimod_winner = { hoimod_apply_reparations = yes }
+		}
+	}
+	else = {
+		hoimod_white_peace_pair = yes
+		var:global.hoimod_side_a = { hoimod_leave_for_split = yes }
+		var:global.hoimod_side_b = { hoimod_leave_for_split = yes }
+		var:global.hoimod_side_a = {
+			create_faction = hoimod_split_losers
+			add_to_faction = var:global.hoimod_side_b
+			set_country_flag = hoimod_temp_faction
+		}
+		var:global.hoimod_side_b = { set_country_flag = hoimod_temp_faction }
+		var:global.hoimod_bench_a = {
+			create_faction = hoimod_split_winners
+			add_to_faction = var:global.hoimod_bench_b
+		}
+		if = {
+			limit = { var:global.hoimod_side_a = { is_ai = no } }
+			var:global.hoimod_bench_a = { change_tag_from = var:global.hoimod_side_a }
+		}
+		if = {
+			limit = { var:global.hoimod_side_b = { is_ai = no } }
+			var:global.hoimod_bench_b = { change_tag_from = var:global.hoimod_side_b }
+		}
+		var:global.hoimod_bench_a = {
+			declare_war_on = { target = var:global.hoimod_side_a type = annex_everything }
+			if = {
+				limit = { NOT = { has_war_with = var:global.hoimod_side_b } }
+				declare_war_on = { target = var:global.hoimod_side_b type = annex_everything }
+			}
+		}
+		var:global.hoimod_bench_b = {
+			add_to_war = {
+				targeted_alliance = var:global.hoimod_bench_a
+				enemy = var:global.hoimod_side_a
+			}
+		}
+		every_state = {
+			limit = {
+				has_variable = hoimod_claim
+				check_variable = { hoimod_claim_mark = global.hoimod_mark_id }
+			}
+			if = {
+				limit = { check_variable = { hoimod_claim = 1 } }
+				set_state_controller_to = var:global.hoimod_bench_a
+			}
+			else_if = {
+				limit = { check_variable = { hoimod_claim = 2 } }
+				set_state_controller_to = var:global.hoimod_bench_b
+			}
+		}
+		set_global_flag = hoimod_split_pc
+		var:global.hoimod_bench_a = {
+			start_peace_conference = {
+				tag = var:global.hoimod_side_a
+				score_factor = 0.74
+				winner_scope = FACTION
+				loser_scope = FACTION
+			}
 		}
 	}
 }
 
-hoimod_transfer_frozen = {
-	every_country = {
+hoimod_finish_split = {
+	clr_global_flag = hoimod_split_pc
+	if = {
 		limit = {
-			OR = {
-				tag = var:global.hoimod_winner
-				is_in_faction_with = var:global.hoimod_winner
-				is_subject_of = var:global.hoimod_winner
-				AND = {
-					is_subject = yes
-					overlord = { is_in_faction_with = var:global.hoimod_winner }
-				}
-			}
+			var:global.hoimod_bench_a = { is_ai = no }
+			var:global.hoimod_side_a = { exists = yes }
 		}
-		every_controlled_state = {
-			limit = {
-				owner = {
-					OR = {
-						tag = var:global.hoimod_loser
-						is_subject_of = var:global.hoimod_loser
-					}
-				}
-			}
-			transfer_state_to = PREV
-		}
+		var:global.hoimod_side_a = { change_tag_from = var:global.hoimod_bench_a }
 	}
-	every_country = {
+	if = {
 		limit = {
-			OR = {
-				tag = var:global.hoimod_loser
-				is_subject_of = var:global.hoimod_loser
-			}
+			var:global.hoimod_bench_b = { is_ai = no }
+			var:global.hoimod_side_b = { exists = yes }
 		}
-		every_controlled_state = {
-			limit = {
-				owner = {
-					OR = {
-						tag = var:global.hoimod_winner
-						is_in_faction_with = var:global.hoimod_winner
-						is_subject_of = var:global.hoimod_winner
-					}
-				}
-			}
-			transfer_state_to = PREV
-		}
+		var:global.hoimod_side_b = { change_tag_from = var:global.hoimod_bench_b }
 	}
+	var:global.hoimod_bench_a = {
+		every_owned_state = { transfer_state_to = var:global.hoimod_side_a }
+	}
+	var:global.hoimod_bench_b = {
+		every_owned_state = { transfer_state_to = var:global.hoimod_side_b }
+	}
+	var:global.hoimod_vault = {
+		every_owned_state = { transfer_state_to = var:hoimod_return_owner }
+		reserve_dynamic_country = no
+	}
+	var:global.hoimod_bench_a = {
+		if = { limit = { is_faction_leader = yes } dismantle_faction = yes }
+		reserve_dynamic_country = no
+		clr_country_flag = hoimod_conference_active
+	}
+	var:global.hoimod_bench_b = {
+		reserve_dynamic_country = no
+		clr_country_flag = hoimod_conference_active
+	}
+	var:global.hoimod_side_a = {
+		if = {
+			limit = { is_faction_leader = yes has_country_flag = hoimod_temp_faction }
+			dismantle_faction = yes
+		}
+		clr_country_flag = hoimod_temp_faction
+	}
+	var:global.hoimod_side_b = {
+		if = {
+			limit = { is_in_faction = yes has_country_flag = hoimod_temp_faction }
+			leave_faction = yes
+		}
+		clr_country_flag = hoimod_temp_faction
+	}
+	var:global.hoimod_side_a = { hoimod_restore_faction = yes }
+	var:global.hoimod_side_b = { hoimod_restore_faction = yes }
+	if = {
+		limit = { var:global.hoimod_winner = { has_country_flag = hoimod_rep_receiver } }
+		var:global.hoimod_winner = { hoimod_apply_reparations = yes }
+	}
+}
+
+hoimod_restore_faction = {
+	if = {
+		limit = {
+			has_variable = hoimod_old_leader
+			NOT = { is_in_faction = yes }
+			var:hoimod_old_leader = { is_in_faction = yes }
+		}
+		var:hoimod_old_leader = { add_to_faction = PREV }
+	}
+	clear_variable = hoimod_old_leader
 }
 
 hoimod_reject_offer = {

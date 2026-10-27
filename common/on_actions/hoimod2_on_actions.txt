@@ -79,6 +79,10 @@ on_actions = {
 	on_peaceconference_ended = {
 		effect = {
 			if = {
+				limit = { has_global_flag = hoimod_split_pc }
+				hoimod_finish_split = yes
+			}
+			if = {
 				limit = { has_country_flag = hoimod_rep_receiver }
 				hoimod_apply_reparations = yes
 			}

@@ -1,0 +1,17 @@
+peace_action_modifiers = {
+
+	hoimod_keep_full_price = {
+		category = occupation
+		peace_action_type = take_states
+
+		enable = {
+			ROOT = { has_country_flag = hoimod_conference_active }
+			FROM.FROM.FROM = {
+				NOT = { is_controlled_by = ROOT }
+				controller = { is_in_faction_with = ROOT }
+			}
+		}
+
+		cost_multiplier = 2
+	}
+}
