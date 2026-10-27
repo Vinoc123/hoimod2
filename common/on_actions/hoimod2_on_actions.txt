@@ -3,6 +3,10 @@ on_actions = {
 	on_startup = {
 		effect = {
 			every_country = {
+				limit = { has_war = yes }
+				hoimod_monthly_update = yes
+			}
+			every_country = {
 				limit = {
 					original_tag = GER
 					has_government = fascism
@@ -59,8 +63,16 @@ on_actions = {
 
 	on_war_relation_added = {
 		effect = {
-			ROOT = { set_variable = { hoimod_war_start@FROM = global.num_days } }
-			FROM = { set_variable = { hoimod_war_start@ROOT = global.num_days } }
+			ROOT = {
+				set_variable = { hoimod_war_start@FROM = global.num_days }
+				set_variable = { hoimod_adv_left@FROM = 90 }
+				set_variable = { hoimod_year_left@FROM = 365 }
+			}
+			FROM = {
+				set_variable = { hoimod_war_start@ROOT = global.num_days }
+				set_variable = { hoimod_adv_left@ROOT = 90 }
+				set_variable = { hoimod_year_left@ROOT = 365 }
+			}
 		}
 	}
 
@@ -72,6 +84,9 @@ on_actions = {
 			}
 			clr_country_flag = hoimod_conference_active
 			clr_country_flag = hoimod_offer_pending
+			every_country = {
+				clr_country_flag = hoimod_conference_active
+			}
 		}
 	}
 

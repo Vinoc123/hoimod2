@@ -3,12 +3,9 @@
 # Leverage = 0.70 * enemy surrender progress + 0.30 * our share of the pair's casualties.
 # Casualty share uses thousands and adds 80 before dividing.
 # Advantage: war longer than 90 days, best leverage at least 0.35, gap at least 0.20.
-# Score for advantage is the gap, clamped to 0.20..0.85.
-# Frozen front: longer than 365 days, both surrender progresses in 0.05..0.55,
-# neither rose by more than 0.08 over the tracked half year, pair casualties at least 300k.
-# Frozen score is 0.12. No shared front: longer than 365 days, score 0.05.
-# Reparations subtract 0.08, 0.15, or 0.25. A tier is hidden when the remainder is below 0.05.
-# Medium and heavy exist only for an advantage. Cooldown after a refusal is 180 days.
+# Negotiated score is 0.06 for every case. This is a draw, not a capitulation budget.
+# Occupied non-capital states are handed over before the window. Uncontrolled land is priced as a draw.
+# Frozen front and no shared front: longer than 365 days. Frozen score rules are otherwise unchanged.
 
 hoimod_monthly_update = {
 	if = {
@@ -269,8 +266,7 @@ hoimod_update_pair = {
 			check_variable = { gap > 0.199 }
 		}
 		set_temp_variable = { case = 1 }
-		set_temp_variable = { base_score = gap }
-		clamp_temp_variable = { var = base_score min = 0.20 max = 0.85 }
+		set_temp_variable = { base_score = 0.06 }
 	}
 	else_if = {
 		limit = {
@@ -288,7 +284,7 @@ hoimod_update_pair = {
 			check_variable = { cas_sum > 299 }
 		}
 		set_temp_variable = { case = 2 }
-		set_temp_variable = { base_score = 0.12 }
+		set_temp_variable = { base_score = 0.06 }
 	}
 	else_if = {
 		limit = {
@@ -304,15 +300,21 @@ hoimod_update_pair = {
 			check_variable = { hoimod_they_hold < 2 }
 		}
 		set_temp_variable = { case = 3 }
-		set_temp_variable = { base_score = 0.05 }
+		set_temp_variable = { base_score = 0.06 }
 	}
 
-	set_temp_variable = { light = base_score }
-	subtract_from_temp_variable = { light = 0.08 }
-	set_temp_variable = { medium = base_score }
-	subtract_from_temp_variable = { medium = 0.15 }
-	set_temp_variable = { heavy = base_score }
-	subtract_from_temp_variable = { heavy = 0.25 }
+	set_temp_variable = { adv_left = 90 }
+	subtract_from_temp_variable = { adv_left = hoimod_len }
+	if = {
+		limit = { check_variable = { adv_left < 0 } }
+		set_temp_variable = { adv_left = 0 }
+	}
+	set_temp_variable = { year_left = 365 }
+	subtract_from_temp_variable = { year_left = hoimod_len }
+	if = {
+		limit = { check_variable = { year_left < 0 } }
+		set_temp_variable = { year_left = 0 }
+	}
 
 	set_variable = { hoimod_case@var:hoimod_pair_enemy_var = case }
 	set_variable = { hoimod_base_score@var:hoimod_pair_enemy_var = base_score }
@@ -322,25 +324,18 @@ hoimod_update_pair = {
 	set_variable = { hoimod_signed_gap@var:hoimod_pair_enemy_var = signed }
 	set_variable = { hoimod_us_on_them@var:hoimod_pair_enemy_var = hoimod_us_on_them }
 	set_variable = { hoimod_them_on_us@var:hoimod_pair_enemy_var = hoimod_them_on_us }
+	set_variable = { hoimod_adv_left@var:hoimod_pair_enemy_var = adv_left }
+	set_variable = { hoimod_year_left@var:hoimod_pair_enemy_var = year_left }
 	set_variable = { hoimod_can_light@var:hoimod_pair_enemy_var = 0 }
 	set_variable = { hoimod_can_medium@var:hoimod_pair_enemy_var = 0 }
 	set_variable = { hoimod_can_heavy@var:hoimod_pair_enemy_var = 0 }
 	if = {
-		limit = { check_variable = { light > 0.049 } }
+		limit = { check_variable = { case > 0 } }
 		set_variable = { hoimod_can_light@var:hoimod_pair_enemy_var = 1 }
 	}
 	if = {
-		limit = {
-			check_variable = { case = 1 }
-			check_variable = { medium > 0.049 }
-		}
+		limit = { check_variable = { case = 1 } }
 		set_variable = { hoimod_can_medium@var:hoimod_pair_enemy_var = 1 }
-	}
-	if = {
-		limit = {
-			check_variable = { case = 1 }
-			check_variable = { heavy > 0.049 }
-		}
 		set_variable = { hoimod_can_heavy@var:hoimod_pair_enemy_var = 1 }
 	}
 
@@ -444,20 +439,7 @@ hoimod_send_offer = {
 					}
 				}
 			}
-			set_temp_variable = { score = hoimod_base_score@var:hoimod_pair_enemy_var }
-			if = {
-				limit = { check_variable = { hoimod_tier = 1 } }
-				subtract_from_temp_variable = { score = 0.08 }
-			}
-			else_if = {
-				limit = { check_variable = { hoimod_tier = 2 } }
-				subtract_from_temp_variable = { score = 0.15 }
-			}
-			else_if = {
-				limit = { check_variable = { hoimod_tier = 3 } }
-				subtract_from_temp_variable = { score = 0.25 }
-			}
-			set_variable = { global.hoimod_score = score }
+			set_variable = { global.hoimod_score = hoimod_base_score@var:hoimod_pair_enemy_var }
 			set_variable = { global.hoimod_case = hoimod_case@var:hoimod_pair_enemy_var }
 			set_variable = { global.hoimod_rep = hoimod_tier }
 			set_variable = { global.hoimod_gap = hoimod_gap@var:hoimod_pair_enemy_var }
@@ -575,10 +557,7 @@ hoimod_send_offer = {
 }
 
 hoimod_accept_offer = {
-	if = {
-		limit = { check_variable = { global.hoimod_case = 2 } }
-		hoimod_transfer_frozen = yes
-	}
+	hoimod_transfer_frozen = yes
 	if = {
 		limit = { check_variable = { global.hoimod_rep > 0 } }
 		var:global.hoimod_winner = {
@@ -592,6 +571,9 @@ hoimod_accept_offer = {
 		save_event_target_as = hoimod_winner_et
 		set_variable = { hoimod_pc_score = global.hoimod_score }
 		set_country_flag = hoimod_conference_active
+		every_allied_country = {
+			set_country_flag = hoimod_conference_active
+		}
 	}
 	var:global.hoimod_loser = { save_event_target_as = hoimod_loser_et }
 	var:global.hoimod_proposer = { set_country_flag = hoimod_conference_active }

@@ -14,13 +14,18 @@
  hoimod_answer_no_desc:0 "Отказ закроет эту пару на 180 дней. Повод: [HoimodCase]. Репарации: [HoimodRep]."
 
  hoimod_offer_none:0 "Предложить конференцию [From.GetNameDef]"
- hoimod_offer_none_desc:0 "Без репараций. Повод появляется сам: преимущество, мёртвый фронт или война без линии фронта."
+ hoimod_offer_none_desc:0 "Без репараций. До преимущества осталось [?ROOT.hoimod_adv_left@FROM|0] дн. До мёртвого фронта и войны без линии фронта осталось [?ROOT.hoimod_year_left@FROM|0] дн."
  hoimod_offer_light:0 "Конференция с лёгкими репарациями: [From.GetNameDef]"
- hoimod_offer_light_desc:0 "Год выплат. Съедает 0.08 доли очков конференции."
+ hoimod_offer_light_desc:0 "Год выплат, 8% товаров. До преимущества осталось [?ROOT.hoimod_adv_left@FROM|0] дн. До мёртвого фронта и войны без линии фронта осталось [?ROOT.hoimod_year_left@FROM|0] дн."
  hoimod_offer_medium:0 "Конференция со средними репарациями: [From.GetNameDef]"
- hoimod_offer_medium_desc:0 "Два года выплат. Съедает 0.15 доли очков. Только если одна сторона явно сильнее."
+ hoimod_offer_medium_desc:0 "Два года выплат, 15% товаров. Только при преимуществе. До преимущества осталось [?ROOT.hoimod_adv_left@FROM|0] дн."
  hoimod_offer_heavy:0 "Конференция с тяжёлыми репарациями: [From.GetNameDef]"
- hoimod_offer_heavy_desc:0 "Три года выплат. Съедает 0.25 доли очков. Только если одна сторона явно сильнее и очков хватает."
+ hoimod_offer_heavy_desc:0 "Три года выплат, 25% товаров. Только при преимуществе. До преимущества осталось [?ROOT.hoimod_adv_left@FROM|0] дн."
+
+ hoimod_not_ready_tt:0 "Срок ещё не вышел или повод не сложился."
+ hoimod_tier_light_tt:0 "Лёгкие репарации можно приложить, когда конференцию уже можно созвать."
+ hoimod_tier_medium_tt:0 "Средние репарации только если одна сторона заметно сильнее."
+ hoimod_tier_heavy_tt:0 "Тяжёлые репарации только если одна сторона заметно сильнее."
 
  hoimod2.1.t:0 "Предложение мирной конференции"
  hoimod2.1.d:0 "[hoimod_proposer_et.GetNameDefCap] предлагает мирную конференцию с [hoimod_target_et.GetNameDef]. Повод: [HoimodCase]. Репарации: [HoimodRep]."

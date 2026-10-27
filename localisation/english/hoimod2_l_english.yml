@@ -14,13 +14,18 @@
  hoimod_answer_no_desc:0 "A refusal closes this pair for 180 days. Cause: [HoimodCase]. Reparations: [HoimodRep]."
 
  hoimod_offer_none:0 "Offer a conference to [From.GetNameDef]"
- hoimod_offer_none_desc:0 "No reparations. The offer appears on its own: a clear advantage, a dead front, or a war with no front line."
+ hoimod_offer_none_desc:0 "No reparations. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days. A dead front or a war with no front line in [?ROOT.hoimod_year_left@FROM|0] days."
  hoimod_offer_light:0 "Conference with light reparations: [From.GetNameDef]"
- hoimod_offer_light_desc:0 "One year of payments. Costs 0.08 of the conference score."
+ hoimod_offer_light_desc:0 "One year of payments, 8% consumer goods. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days. A dead front or a war with no front line in [?ROOT.hoimod_year_left@FROM|0] days."
  hoimod_offer_medium:0 "Conference with moderate reparations: [From.GetNameDef]"
- hoimod_offer_medium_desc:0 "Two years of payments. Costs 0.15 of the conference score. Only when one side is clearly ahead."
+ hoimod_offer_medium_desc:0 "Two years of payments, 15% consumer goods. Only with an advantage. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days."
  hoimod_offer_heavy:0 "Conference with heavy reparations: [From.GetNameDef]"
- hoimod_offer_heavy_desc:0 "Three years of payments. Costs 0.25 of the conference score. Only when one side is clearly ahead and the score can bear it."
+ hoimod_offer_heavy_desc:0 "Three years of payments, 25% consumer goods. Only with an advantage. Advantage in [?ROOT.hoimod_adv_left@FROM|0] days."
+
+ hoimod_not_ready_tt:0 "The time has not run out, or the cause is not there yet."
+ hoimod_tier_light_tt:0 "Light reparations can be attached once the conference itself can be called."
+ hoimod_tier_medium_tt:0 "Moderate reparations require one side to be clearly ahead."
+ hoimod_tier_heavy_tt:0 "Heavy reparations require one side to be clearly ahead."
 
  hoimod2.1.t:0 "Peace Conference Offer"
  hoimod2.1.d:0 "[hoimod_proposer_et.GetNameDefCap] offers a peace conference with [hoimod_target_et.GetNameDef]. Cause: [HoimodCase]. Reparations: [HoimodRep]."

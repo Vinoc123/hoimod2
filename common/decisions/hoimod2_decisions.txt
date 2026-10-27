@@ -61,7 +61,14 @@ hoimod_peace_category = {
 		}
 
 		visible = {
-			hoimod_can_call_peace = yes
+			hoimod_peace_shown = yes
+		}
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = hoimod_not_ready_tt
+				hoimod_can_call_peace = yes
+			}
 		}
 
 		ai_will_do = {
@@ -98,8 +105,18 @@ hoimod_peace_category = {
 		}
 
 		visible = {
-			hoimod_can_call_peace = yes
-			check_variable = { hoimod_can_light@FROM = 1 }
+			hoimod_peace_shown = yes
+		}
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = hoimod_not_ready_tt
+				hoimod_can_call_peace = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = hoimod_tier_light_tt
+				check_variable = { hoimod_can_light@FROM = 1 }
+			}
 		}
 
 		ai_will_do = {
@@ -133,8 +150,18 @@ hoimod_peace_category = {
 		}
 
 		visible = {
-			hoimod_can_call_peace = yes
-			check_variable = { hoimod_can_medium@FROM = 1 }
+			hoimod_peace_shown = yes
+		}
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = hoimod_not_ready_tt
+				hoimod_can_call_peace = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = hoimod_tier_medium_tt
+				check_variable = { hoimod_can_medium@FROM = 1 }
+			}
 		}
 
 		ai_will_do = {
@@ -168,8 +195,18 @@ hoimod_peace_category = {
 		}
 
 		visible = {
-			hoimod_can_call_peace = yes
-			check_variable = { hoimod_can_heavy@FROM = 1 }
+			hoimod_peace_shown = yes
+		}
+
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = hoimod_not_ready_tt
+				hoimod_can_call_peace = yes
+			}
+			custom_trigger_tooltip = {
+				tooltip = hoimod_tier_heavy_tt
+				check_variable = { hoimod_can_heavy@FROM = 1 }
+			}
 		}
 
 		ai_will_do = {
